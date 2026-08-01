@@ -17,7 +17,7 @@ public final class BluetoothModule: NSObject, NativeModule, CBCentralManagerDele
         case "stopScan": self.stopScan(); try self.success([:], completion)
         case "connect": try self.peripheral(v).delegate = self; self.central.connect(try self.peripheral(v)); try self.success([:], completion)
         case "disconnect": self.central.cancelPeripheralConnection(try self.peripheral(v)); try self.success([:], completion)
-        case "read": let (_, c) = try self.characteristic(v); c.service?.peripheral.readValue(for: c); try self.success([:], completion)
+        case "read": let (p, c) = try self.characteristic(v); p.readValue(for: c); try self.success([:], completion)
         case "write": let (p, c) = try self.characteristic(v); guard let data = Data(base64Encoded: try v.text("valueBase64")), data.count <= 512 else { throw BLEError.invalid }; p.writeValue(data, for: c, type: (try v.flag("response")) ? .withResponse : .withoutResponse); try self.success([:], completion)
         case "subscribe": let (p, c) = try self.characteristic(v); p.setNotifyValue(try v.flag("enabled"), for: c); try self.success([:], completion)
         case "poll": let limit = min(256, max(1, Int(try v.integer("limit")))); let rows = Array(self.events.prefix(limit)); self.events.removeFirst(min(limit, self.events.count)); let data = try JSONSerialization.data(withJSONObject: rows); try self.success(["json": .text(String(data: data, encoding: .utf8) ?? "[]")], completion)
