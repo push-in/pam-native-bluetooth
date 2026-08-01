@@ -2,6 +2,11 @@
 
 Production-oriented Bluetooth Low Energy for PAM Native. Scan by service UUID, connect, discover services, read and write characteristics, subscribe to notifications, and consume a bounded native event queue that survives PHP request boundaries.
 
+```bash
+composer require pushinbr/pam-native-bluetooth
+pam mobile prepare
+```
+
 ```php
 $bluetooth->scan(['180d'], fn (bool $ok, ?string $error) => null);
 $bluetooth->poll(function (array $events) use ($bluetooth) {
